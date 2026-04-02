@@ -1,0 +1,87 @@
+<div class="min-h-screen bg-slate-50 px-4 py-10">
+  <div
+    class="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+  >
+    <div class="mb-6">
+      <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Welcome</p>
+      <h1 class="mt-1 text-2xl font-semibold text-slate-900">Please sign in or login</h1>
+      <p class="mt-1 text-sm text-slate-600">Use your email and password to continue.</p>
+    </div>
+
+    <form (submit)="onSubmit($event)" class="space-y-5">
+      <div class="flex rounded-xl bg-slate-100 p-1">
+        <button
+          data-testid="loginmode-btn"
+          type="button"
+          class="flex-1 rounded-lg px-3 py-2 text-sm font-medium transition"
+          [ngClass]="
+            authMode() === 'login'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          "
+          (click)="setAuthMode('login')"
+        >
+          Login
+        </button>
+        <button
+          data-testid="signinmode-btn"
+          type="button"
+          class="flex-1 rounded-lg px-3 py-2 text-sm font-medium transition"
+          [ngClass]="
+            authMode() === 'signin'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          "
+          (click)="setAuthMode('signin')"
+        >
+          Sign in
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <label for="email" class="text-sm font-medium text-slate-700">Email</label>
+        <input
+          [formField]="form.email"
+          id="email"
+          type="email"
+          placeholder="Please enter email..."
+          autocomplete="off"
+          autofill="none"
+          class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+        />
+        @if (form.email().touched() && form.email().invalid()) {
+          <span class="text-xs text-rose-600">Email is not valid</span>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="text-sm font-medium text-slate-700">Password</label>
+        <input
+          [formField]="form.password"
+          id="password"
+          type="password"
+          placeholder="Please enter password..."
+          autocomplete="off"
+          autofill="none"
+          class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+        />
+        @if (form.password().touched() && form.password().invalid()) {
+          <span class="text-xs text-rose-600">Password is not valid</span>
+        }
+      </div>
+
+      <button
+        data-testid="auth-btn"
+        [disabled]="form().invalid() || form().submitting()"
+        type="submit"
+        class="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+      >
+        @if (form().submitting()) {
+          submitting ...
+        } @else {
+          {{ btnMessage() }}
+        }
+      </button>
+    </form>
+  </div>
+</div>
