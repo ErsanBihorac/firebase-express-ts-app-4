@@ -22,18 +22,17 @@ export class AuthService {
 
   constructor() {
     onAuthStateChanged(this.auth, (user: User | null) => {
+      this._user$.next(user);
       if (user) {
-        console.log('User signed in');
         this.router.navigate(['/']);
       } else {
-        console.log('No user signed in');
         this.router.navigate(['/auth']);
       }
     });
   }
 
-  setUser(user: User | null) {
-    this._user$.next(user);
+  get currentUser() {
+    return this._user$.value;
   }
 
   async login(email: string, password: string) {

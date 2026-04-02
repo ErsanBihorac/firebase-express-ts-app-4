@@ -1,17 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { ensureUserExists } from './helpers/auth';
 
 // erstellt ein User damit dieser im signin test erfolgreich angemeldet werden kann
 test.beforeAll(async ({ request }) => {
-  await request.post(
-    'http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-key',
-    {
-      data: {
-        email: 'testuser@example.com',
-        password: 'password123',
-        returnSecureToken: true,
-      },
-    },
-  );
+  const user = { email: 'testuser@example.com', password: 'password123' };
+  ensureUserExists(request, user);
 });
 
 test('auth page shows login form', async ({ page }) => {
@@ -49,5 +42,5 @@ test('login flow', async ({ page }) => {
   await page.getByLabel('Password').fill('password123');
 
   await Promise.all([page.waitForURL('**/'), page.getByTestId('auth-btn').click()]);
-  await expect(page.getByTestId('home-title')).toBeVisible();
+  await expect(page.getByTestId('signedin-text')).toBeVisible();
 });
