@@ -24,7 +24,7 @@
     }
   ],
   "hosting": {
-    "public": "public",
+    "public": "frontend/firebase-express-ts-app-4/dist/firebase-express-ts-app-4/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

@@ -1,4 +1,13 @@
 import {
+  FirebaseApp,
+  FirebaseApps,
+  VERSION,
+  ɵAngularFireSchedulers,
+  ɵgetAllInstancesOf,
+  ɵgetDefaultInstanceOf,
+  ɵzoneWrap
+} from "./chunk-CQCY4R2C.js";
+import {
   applyActionCode,
   beforeAuthStateChanged,
   checkActionCode,
@@ -53,15 +62,6 @@ import {
   verifyBeforeUpdateEmail,
   verifyPasswordResetCode
 } from "./chunk-DCV57PLD.js";
-import {
-  FirebaseApp,
-  FirebaseApps,
-  VERSION,
-  ɵAngularFireSchedulers,
-  ɵgetAllInstancesOf,
-  ɵgetDefaultInstanceOf,
-  ɵzoneWrap
-} from "./chunk-CQCY4R2C.js";
 import {
   Component,
   Deferred,
@@ -1106,4 +1106,4 @@ export {
   verifyBeforeUpdateEmail2 as verifyBeforeUpdateEmail,
   verifyPasswordResetCode2 as verifyPasswordResetCode
 };
-//# sourceMappingURL=chunk-GIKSGV42.js.map
+//# sourceMappingURL=chunk-P4UOZPSG.js.map

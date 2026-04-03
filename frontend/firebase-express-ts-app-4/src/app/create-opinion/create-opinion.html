@@ -1,0 +1,79 @@
+<div class="min-h-screen bg-slate-50 px-4 py-10">
+  <div class="mx-auto w-full max-w-xl">
+    <div
+      class="mb-6 flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+    >
+      <p data-testid="signedin-text" class="text-sm text-slate-600">Signed in</p>
+      <button
+        data-testid="signout-btn"
+        class="hover:cursor-pointer rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+        (click)="this.authService.signout()"
+      >
+        sign out
+      </button>
+    </div>
+
+    <form (submit)="onSubmit($event)">
+      <div
+        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+        data-testid="create-opinion-card"
+      >
+        <div class="mb-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Create Opinion</p>
+          <p class="mt-1 text-lg font-semibold text-slate-900">Share your thoughts</p>
+        </div>
+
+        <div class="mb-6">
+          <label for="opinion" class="text-sm font-medium text-slate-700">Your opinion</label>
+          <textarea
+            data-testid="opinion-textfield"
+            [formField]="form.opinion"
+            id="opinion"
+            rows="4"
+            placeholder="Write your opinion here..."
+            class="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+          ></textarea>
+          @if (form.opinion().touched() && form.opinion().invalid()) {
+            <span class="text-xs text-rose-600">Opinion is not valid</span>
+          }
+        </div>
+
+        <button
+          data-testid="create-opinion-btn"
+          [disabled]="form().invalid() || form().submitting()"
+          type="submit"
+          class="hover:cursor-pointer w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          @if (form().submitting()) {
+            submitting ...
+          } @else {
+            {{ btnMessage() }}
+          }
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="mb-3 flex items-center justify-between">
+        <p class="text-sm font-medium text-slate-700">Quick Actions</p>
+        <span class="text-xs text-slate-500">Manage your opinions</span>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button
+          data-testid="view-opinions-btn"
+          class="hover:cursor-pointer flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+          routerLink="/view-opinion"
+        >
+          View your opinions
+        </button>
+        <button
+          data-testid="rate-opinion-btn"
+          class="hover:cursor-pointer flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+          routerLink="/"
+        >
+          Rate opinions
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

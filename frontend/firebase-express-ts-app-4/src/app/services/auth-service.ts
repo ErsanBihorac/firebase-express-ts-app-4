@@ -1,7 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-
 import { BehaviorSubject } from 'rxjs';
-import { Router } from '@angular/router';
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -10,6 +8,7 @@ import {
   signOut,
 } from '@angular/fire/auth';
 import { User } from 'firebase/auth';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -17,16 +16,24 @@ import { User } from 'firebase/auth';
 export class AuthService {
   auth = inject(Auth);
   router = inject(Router);
+
   private readonly _user$ = new BehaviorSubject<User | null>(null);
   user$ = this._user$.asObservable();
+
+  private authReadyResolved = false;
+  private resolveAuthReady!: () => void;
+
+  authReady = new Promise<void>((resolve) => {
+    //wartet bis der ein nutzer geladen ist um dann zu resolven
+    this.resolveAuthReady = resolve;
+  });
 
   constructor() {
     onAuthStateChanged(this.auth, (user: User | null) => {
       this._user$.next(user);
-      if (user) {
-        this.router.navigate(['/']);
-      } else {
-        this.router.navigate(['/auth']);
+      if (!this.authReadyResolved) {
+        this.authReadyResolved = true;
+        this.resolveAuthReady();
       }
     });
   }
@@ -38,6 +45,7 @@ export class AuthService {
   async login(email: string, password: string) {
     const res = await signInWithEmailAndPassword(this.auth, email, password);
     if (!res) return console.log('login was unsuccessfull');
+    this.router.navigate(['/']);
 
     return res.user;
   }
@@ -45,6 +53,7 @@ export class AuthService {
   async register(email: string, password: string) {
     const res = await createUserWithEmailAndPassword(this.auth, email, password);
     if (!res) return console.log('register was unsuccessfull');
+    this.router.navigate(['/']);
 
     return res.user;
   }
@@ -52,6 +61,7 @@ export class AuthService {
   async signout() {
     try {
       await signOut(this.auth);
+      await this.router.navigate(['/auth']);
     } catch (error) {
       console.log(error);
     }

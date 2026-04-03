@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth-service';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Router } from '@angular/router';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 vi.mock('@angular/fire/auth', () => {
@@ -13,10 +12,7 @@ vi.mock('@angular/fire/auth', () => {
 
 describe('AuthService', () => {
   let service: AuthService; // AuthService wird definiert
-  let navigateSpy: ReturnType<typeof vi.fn>; // Spy auf navigation
-
   beforeEach(() => {
-    navigateSpy = vi.fn();
     (onAuthStateChanged as unknown as ReturnType<typeof vi.fn>).mockImplementation(
       (_auth: Auth, nextOrObserver) => {
         const next = typeof nextOrObserver === 'function' ? nextOrObserver : nextOrObserver?.next;
@@ -31,7 +27,6 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: Auth, useValue: {} }, // Auth wird durch ein leeres Objekt ersetzt (Wir brauchen kein echtes Firebase-Auth)
-        { provide: Router, useValue: { navigate: navigateSpy } }, // Router bekommt den Spy damit wir die Navigation prüfen können
       ],
     });
     service = TestBed.inject(AuthService); // Der service wird erstellt, und onAuthStateChanged registriert und es wird cb(null) ausgeführt
@@ -46,23 +41,20 @@ describe('AuthService', () => {
     expect(service).toBeTruthy(); // service sollte erstellt worden sein
   });
 
-  it('redirects to /auth when no user is logged in', () => {
-    expect(navigateSpy).toHaveBeenCalledWith(['/auth']); // der Spy sollte einmal aufgerufen worden sein mit dem parameter /auth
+  it('sets currentUser to null when no user is logged in', () => {
+    expect(service.currentUser).toBeNull();
   });
 });
 
 describe('When user is logged in', () => {
   let service: AuthService;
-  let navigateSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    navigateSpy = vi.fn();
-
     (onAuthStateChanged as unknown as ReturnType<typeof vi.fn>).mockImplementationOnce(
       (_auth: Auth, nextOrObserver) => {
         const next = typeof nextOrObserver === 'function' ? nextOrObserver : nextOrObserver?.next;
         if (next) {
-          (next as (user: unknown) => void)({ uid: '123' }); // gibt den Fake nutzer zurück statt null (nutzer ist eingeloggt)
+          (next as (user: unknown) => void)({ uid: '123', email: 'test@example.com' }); // Fake user
         }
         return () => {};
       },
@@ -72,7 +64,6 @@ describe('When user is logged in', () => {
       providers: [
         AuthService,
         { provide: Auth, useValue: {} }, // Auth wird durch ein leeres Objekt ersetzt (Wir brauchen kein echtes Firebase-Auth)
-        { provide: Router, useValue: { navigate: navigateSpy } }, // Router bekommt den Spy damit wir die Navigation prüfen können
       ],
     });
     service = TestBed.inject(AuthService); // Der service wird erstellt, und onAuthStateChanged registriert und es wird cb(null) ausgeführt
@@ -86,7 +77,8 @@ describe('When user is logged in', () => {
     expect(service).toBeTruthy();
   });
 
-  it('redirects to / when user is logged in', () => {
-    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+  it('sets currentUser when user is logged in', () => {
+    expect(service.currentUser).toBeTruthy();
+    expect(service.currentUser?.uid).toBe('123');
   });
 });
